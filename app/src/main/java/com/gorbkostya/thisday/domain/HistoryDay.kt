@@ -5,6 +5,6 @@ data class HistoryDay(
     val day: Int,
     val selected: List<HistoryEvent>,
     val events: List<HistoryEvent>,
-    val birth: List<Birth>,
-    val holiday: List<Holiday>
+    val births: List<Birth>,
+    val holidays: List<Holiday>
 )
