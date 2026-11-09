@@ -16,6 +16,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gorbkostya.thisday.presentation.theme.HistoryTheme
 import com.gorbkostya.thisday.presentation.today.TodayContent
+import com.gorbkostya.thisday.presentation.today.TodayScreen
 import com.gorbkostya.thisday.presentation.today.TodayViewModel
 
 class MainActivity : ComponentActivity() {
@@ -24,32 +25,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             HistoryTheme {
-                val viewModel: TodayViewModel = viewModel(factory = TodayViewModel.Factory)
-                val state by viewModel.state.collectAsStateWithLifecycle()
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background),
-                    contentAlignment = Alignment.Center
-                ) {
-                    when(val content = state.content) {
-                        is TodayContent.Content -> Text(
-                            text = "${state.date}: событий ${content.day.events.size}",
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        is TodayContent.Error -> Text(
-                            text = "Ошибка: ${content.message}",
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        TodayContent.Loading -> Text(
-                            text = "Загрузка...",
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-
-                }
-
+                TodayScreen()
             }
         }
     }

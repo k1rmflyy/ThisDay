@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">ThisDay</string>
+
+
+
+    <plurals name="years_ago">
+        <item quantity="one">%d год назад</item>
+        <item quantity="few">%d года назад</item>
+        <item quantity="many">%d лет назад</item>
+        <item quantity="other">%d года назад</item>
+    </plurals>
+
+
 </resources>
