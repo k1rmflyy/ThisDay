@@ -2,6 +2,7 @@ package com.gorbkostya.thisday.presentation.today
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,7 @@ fun TimelineItem(
     event: HistoryEvent,
     today: LocalDate,
     isLast: Boolean,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -43,6 +45,10 @@ fun TimelineItem(
         modifier = modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
+            .clickable(
+                enabled = event.mainArticle != null,
+                onClick = onClick
+            )
     ) {
 
         Text(

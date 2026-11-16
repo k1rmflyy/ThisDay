@@ -7,5 +7,10 @@ data class HistoryEvent(
 ) {
 
     val mainArticle: Article?
-        get() = articles.firstOrNull()
+        get() = articles.firstOrNull { article ->
+            val title = article.title.trim()
+
+            title != year.toString() &&
+                    title != "$year год"
+        }
 }
