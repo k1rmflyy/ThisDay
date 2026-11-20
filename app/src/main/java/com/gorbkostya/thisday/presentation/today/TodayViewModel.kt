@@ -38,6 +38,8 @@ class TodayViewModel(
             TodayCommand.PreviousDay -> changeDate(_state.value.date.minusDays(1))
             TodayCommand.Retry -> load()
             is TodayCommand.SelectTab -> _state.update { it.copy(tab = command.tab) }
+            TodayCommand.CloseEvent -> _state.update { it.copy(selectedEvent = null) }
+            is TodayCommand.OpenEvent -> _state.update { it.copy(selectedEvent = command.event) }
         }
     }
 

@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -64,7 +65,17 @@ fun TodayScreenContent(
 ) {
 
     val uriHandler = LocalUriHandler.current
+    val selectedEvent = state.selectedEvent
+    val listState = rememberLazyListState()
 
+    if (selectedEvent != null) {
+        EventDetailsScreen(
+            event = selectedEvent,
+            onBack = { onCommand(TodayCommand.CloseEvent) }
+        )
+
+        return
+    }
 
     Box(
         modifier = modifier
@@ -72,6 +83,7 @@ fun TodayScreenContent(
             .background(MaterialTheme.colorScheme.background)
     ) {
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.safeDrawing),
@@ -149,13 +161,7 @@ fun TodayScreenContent(
                                     HeroCard(
                                         event = highlight,
                                         today = today,
-                                        onClick = {
-                                            val articleUrl = highlight.mainArticle?.url
-
-                                            if (articleUrl != null) {
-                                                uriHandler.openUri(articleUrl)
-                                            }
-                                        }
+                                        onClick = { onCommand(TodayCommand.OpenEvent(highlight)) }
                                     )
 
                                     Spacer(Modifier.height(28.dp))
@@ -176,13 +182,7 @@ fun TodayScreenContent(
                                     event = event,
                                     today = today,
                                     isLast = index == timeline.lastIndex,
-                                    onClick = {
-                                        val articleUrl = event.mainArticle?.url
-
-                                        if (articleUrl != null) {
-                                            uriHandler.openUri(articleUrl)
-                                        }
-                                    }
+                                    onClick = { onCommand(TodayCommand.OpenEvent(event)) }
                                 )
                             }
 

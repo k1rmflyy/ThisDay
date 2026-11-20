@@ -45,10 +45,7 @@ fun TimelineItem(
         modifier = modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
-            .clickable(
-                enabled = event.mainArticle != null,
-                onClick = onClick
-            )
+            .clickable(onClick = onClick)
     ) {
 
         Text(

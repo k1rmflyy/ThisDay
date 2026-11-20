@@ -1,5 +1,6 @@
 package com.gorbkostya.thisday.presentation.today
 
+import com.gorbkostya.thisday.domain.HistoryEvent
 import java.time.LocalDate
 
 sealed interface TodayCommand {
@@ -8,4 +9,8 @@ sealed interface TodayCommand {
     data object NextDay: TodayCommand
     data class PickDate(val date: LocalDate): TodayCommand
     data class SelectTab(val tab: TodayTab): TodayCommand
+
+    data class OpenEvent(val event: HistoryEvent): TodayCommand
+
+    data object CloseEvent: TodayCommand
 }

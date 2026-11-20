@@ -1,6 +1,7 @@
 package com.gorbkostya.thisday.presentation.today
 
 import com.gorbkostya.thisday.domain.HistoryDay
+import com.gorbkostya.thisday.domain.HistoryEvent
 import java.time.LocalDate
 
 enum class TodayTab {
@@ -17,5 +18,6 @@ sealed interface TodayContent {
 data class TodayState(
     val date: LocalDate,
     val tab: TodayTab = TodayTab.EVENTS,
-    val content: TodayContent = TodayContent.Loading
+    val content: TodayContent = TodayContent.Loading,
+    val selectedEvent: HistoryEvent? = null
 )

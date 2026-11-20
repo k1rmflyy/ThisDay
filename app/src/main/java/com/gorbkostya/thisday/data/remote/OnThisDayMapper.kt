@@ -28,10 +28,17 @@ fun OnThisDayItemDto.toEvent(): HistoryEvent? {
 
 fun OnThisDayItemDto.toBirth(): Birth? {
     val birthYear = year ?: return null
+
+    val personPage = pages.firstOrNull { page ->
+        val title = page.titles.normalized.trim()
+
+        title != birthYear.toString() && title != "$birthYear год"
+    }
+
     return Birth(
         year = birthYear,
         text = text,
-        article = pages.firstOrNull()?.toDomain()
+        article = personPage?.toDomain()
     )
 }
 
