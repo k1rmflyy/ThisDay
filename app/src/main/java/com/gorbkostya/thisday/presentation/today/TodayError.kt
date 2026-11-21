@@ -53,13 +53,14 @@ fun TodayError(
 
 
         Text(
-            text = "Нет подключения",
+            text = "Не удалось загрузить данные",
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Center
         )
 
         Text(
-            text = "Не получилось загрузить события. Проверьте интернет и попробуйте ещё раз.",
+            text = "Проверьте подключение к интернету или попробуйте позже.",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center

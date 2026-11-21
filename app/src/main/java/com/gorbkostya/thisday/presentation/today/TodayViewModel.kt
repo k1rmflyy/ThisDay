@@ -40,6 +40,7 @@ class TodayViewModel(
             is TodayCommand.SelectTab -> _state.update { it.copy(tab = command.tab) }
             TodayCommand.CloseEvent -> _state.update { it.copy(selectedEvent = null) }
             is TodayCommand.OpenEvent -> _state.update { it.copy(selectedEvent = command.event) }
+            TodayCommand.GoToToday -> changeDate(LocalDate.now())
         }
     }
 

@@ -1,15 +1,12 @@
 package com.gorbkostya.thisday.presentation.today
 
-import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,27 +17,31 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerColors
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.gorbkostya.thisday.domain.yearsAgo
-import com.gorbkostya.thisday.presentation.theme.HistoryTheme
-import com.gorbkostya.thisday.presentation.theme.historyColors
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneOffset
 
 @Composable
 fun TodayScreen(
@@ -56,6 +57,8 @@ fun TodayScreen(
     )
 }
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodayScreenContent(
     state: TodayState,
@@ -68,6 +71,14 @@ fun TodayScreenContent(
     val selectedEvent = state.selectedEvent
     val listState = rememberLazyListState()
 
+    LaunchedEffect(state.date, state.tab) {
+        listState.scrollToItem(0)
+    }
+
+    var showDatePicker by rememberSaveable {
+        mutableStateOf(false)
+    }
+
     if (selectedEvent != null) {
         EventDetailsScreen(
             event = selectedEvent,
@@ -76,6 +87,62 @@ fun TodayScreenContent(
 
         return
     }
+
+
+    if (showDatePicker) {
+        val pickerState = rememberDatePickerState(
+            initialSelectedDateMillis = state.date
+                .atStartOfDay(ZoneOffset.UTC)
+                .toInstant()
+                .toEpochMilli()
+        )
+
+        DatePickerDialog (
+            onDismissRequest = {
+                showDatePicker = false
+            },
+
+            confirmButton = {
+                TextButton(
+                    enabled = pickerState.selectedDateMillis != null,
+                    onClick = {
+                        val millis = pickerState.selectedDateMillis
+
+                        if (millis != null) {
+                            val date = Instant.ofEpochMilli(millis)
+                                .atZone(ZoneOffset.UTC)
+                                .toLocalDate()
+
+                            onCommand(TodayCommand.PickDate(date))
+                            showDatePicker = false
+                        }
+                    }
+                ) {
+
+                    Text(
+                        text = "Выбрать",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            },
+
+            dismissButton = {
+                TextButton(
+                    onClick = { showDatePicker = false }
+                ) {
+                    Text(
+                        text = "Отмена",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            },
+        ) {
+            DatePicker(state = pickerState)
+        }
+    }
+
 
     Box(
         modifier = modifier
@@ -92,11 +159,23 @@ fun TodayScreenContent(
             item {
                 TodayHeader(
                     date = state.date,
-                    onCalendarClick = {},
+                    onCalendarClick = { showDatePicker = true },
                     onPreviousDay = { onCommand(TodayCommand.PreviousDay) },
                     onNextDay = { onCommand(TodayCommand.NextDay) }
                 )
                 Spacer(Modifier.height(24.dp))
+
+                if (state.date != today) {
+                    TextButton(
+                        onClick = { onCommand(TodayCommand.GoToToday) }
+                    ) {
+                        Text(
+                            text = "Сегодня",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
             }
 
 
@@ -185,15 +264,6 @@ fun TodayScreenContent(
                                     onClick = { onCommand(TodayCommand.OpenEvent(event)) }
                                 )
                             }
-
-                            item {
-                                Text(
-                                    text = "Источник: Википедия · CC BY-SA",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.padding(top = 8.dp),
-                                )
-                            }
                         }
 
                         TodayTab.BIRTHS -> {
@@ -244,6 +314,16 @@ fun TodayScreenContent(
                                 }
                             }
                         }
+
+                    }
+
+                    item {
+                        Text(
+                            text = "Источник: Википедия · CC BY-SA",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 8.dp),
+                        )
                     }
 
                 }

@@ -13,4 +13,6 @@ sealed interface TodayCommand {
     data class OpenEvent(val event: HistoryEvent): TodayCommand
 
     data object CloseEvent: TodayCommand
+
+    data object GoToToday: TodayCommand
 }
